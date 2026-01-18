@@ -16,7 +16,7 @@ install_ptero() {
     echo "┌──────────────────────────────────────────────┐"
     echo "│        🚀 Pterodactyl Installation            │"
     echo "└──────────────────────────────────────────────┘${NC}"
-    bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/panel/pterodactyl.sh)
+    bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/panel/pterodactyl/install.sh)
     echo -e "${GREEN}✔ Installation Complete${NC}"
     read -p "Press Enter to return..."
 }
