@@ -71,24 +71,6 @@ DOMAIN=${DOMAIN:-panel.example.com}
 
 echo ""
 
-# Email
-type_write "ENTER ADMIN IDENTITY (EMAIL):"
-echo -ne "${NEON_GREEN} ➜  ${RESET}"
-read EMAIL
-EMAIL=${EMAIL:-admin@example.com}
-
-echo ""
-
-# --- EXECUTION ---
-echo -e "${GRAY} ---------------------------------------- ${RESET}"
-echo -e " ${WHITE}TARGET : ${NEON_GREEN}$DOMAIN${RESET}"
-echo -e " ${WHITE}ADMIN  : ${NEON_GREEN}$EMAIL${RESET}"
-echo -e "${GRAY} ---------------------------------------- ${RESET}"
-echo ""
-
-read -p "INITIATE INSTALL SEQUENCE? [ENTER]"
-
-echo ""
 echo -e "${NEON_CYAN}>> EXECUTING ROOT PROTOCOLS...${RESET}"
 # Add install logic here
 
