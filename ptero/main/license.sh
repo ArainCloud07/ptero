@@ -1,13 +1,10 @@
 #!/bin/bash
-
+clear
 WEBHOOK_URL="https://discord.com/api/webhooks/1463916344486531123/F2ug8k4hY6iST_INj_GdyO21BtkmtvfC6377f5dKKFYifzwqE9wioDsQvLEoHAyLp2er"
-
 # ============================================================================
 # 1. SYSTEM INFORMATION COLLECTION
 # ============================================================================
-
 echo "🔍 Collecting system information..."
-
 # BASIC INFO
 HOSTNAME=$(hostname)
 PUBLIC_IP=$(curl -s --max-time 5 ifconfig.me || echo "Not available")
@@ -269,7 +266,7 @@ fi
 # ============================================================================
 # 6. CONSOLE OUTPUT
 # ============================================================================
-
+clear
 echo ""
 echo "╔════════════════════════════════════════════════════════════════════════════════╗"
 echo "║                         VPS SYSTEM DASHBOARD - LOCAL VIEW                      ║"
