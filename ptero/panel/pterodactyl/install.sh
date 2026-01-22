@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # ==========================================
-#  CYBERPUNK UI THEME
+#  CYBERPUNK UI THEME v2
 # ==========================================
 
 # --- COLORS ---
 NEON_GREEN="\e[1;32m"
 NEON_CYAN="\e[1;36m"
+NEON_BLUE="\e[1;34m"
 WHITE="\e[1;37m"
 GRAY="\e[0;90m"
 RED="\e[1;31m"
@@ -17,7 +18,7 @@ RESET="\e[0m"
 # Typing effect for text
 type_write() {
     text="$1"
-    delay=0.02
+    delay=0.01 # Made slightly faster for better UX
     for (( i=0; i<${#text}; i++ )); do
         echo -ne "${text:$i:1}"
         sleep $delay
@@ -30,47 +31,66 @@ loading_bar() {
     echo -ne "${NEON_GREEN}[ SYSTEM ]${RESET} "
     for i in {1..20}; do
         echo -ne "█"
-        sleep 0.04
+        sleep 0.02
     done
-    echo -e " ${NEON_CYAN}COMPLETE${RESET}"
+    echo -e " ${NEON_CYAN}ONLINE${RESET}"
 }
 
-# --- HEADER ---
+# --- HEADER SECTION ---
 clear
-echo -e "${NEON_GREEN}"
-cat << "BANNER"
-   ____  ____  ____  ____  ____ 
-  (  _ \(  __)(  _ \(_  _)(  _ \
-   ) __/ ) _)  )   /  )(   )   /
-  (__)  (____)(__\_) (__) (__\_)
-BANNER
+echo -e "${NEON_CYAN}" # Sets the color for the banner
+
+# The 'EOF' (quoted) prevents bash from trying to interpret backslashes
+cat << "EOF"
+ ███████████   █████                                     █████                     █████               ████ 
+░░███░░░░░███ ░░███                                     ░░███                     ░░███               ░░███ 
+ ░███     ░███ ███████     ██████  ████████   ██████     ███████   ██████      ██████  ███████   █████ ████ ░███ 
+ ░██████████  ░░░███░     ███░░███░░███░░███ ███░░███   ███░░███  ░░░░░███    ███░░███░░░███░   ░░███ ░███  ░███ 
+ ░███░░░░░░     ░███     ░███████  ░███ ░░░ ░███ ░███  ░███ ░███   ███████   ░███ ░░░   ░███     ░███ ░███  ░███ 
+ ░███           ░███     ███░███   ░███     ░███ ░███  ░███ ░███  ███░░███   ░███  ███  ░███     ███ ░███  ░███ 
+ █████          ░░█████ ░░██████   █████    ░░██████   ░░████████░░████████  ░░██████   ░░█████ ░░███████  █████
+░░░░░            ░░░░░   ░░░░░░   ░░░░░      ░░░░░░     ░░░░░░░░  ░░░░░░░░    ░░░░░░     ░░░░░   ░░░░░███ ░░░░░ 
+                                                                                                   ███ ░███     
+                                                                                                  ░░██████      
+                                                                                                   ░░░░░░       
+EOF
+
 echo -e "${RESET}"
-echo -e "${GRAY} :: PTERODACTYL AUTO-DEPLOYMENT SYSTEM :: ${RESET}"
-echo -e "${GRAY} ---------------------------------------- ${RESET}"
+echo -e "${GRAY} ┌────────────────────────────────────────────────────────────────────────┐ ${RESET}"
+echo -e "${GRAY} │ ${NEON_GREEN}       :: PTERODACTYL AUTO-DEPLOYMENT SYSTEM :: v2.0       ${GRAY}          │ ${RESET}"
+echo -e "${GRAY} └────────────────────────────────────────────────────────────────────────┘ ${RESET}"
 echo ""
 
 # --- BOOT SEQUENCE ---
-echo -ne "${NEON_GREEN} [+] ${RESET}"
-type_write "Initializing kernel modules..."
-echo -ne "${NEON_GREEN} [+] ${RESET}"
-type_write "Checking environment variables..."
+echo -ne "${NEON_BLUE} [KERNEL] ${RESET}"
+type_write "Loading core modules..."
+echo -ne "${NEON_BLUE} [MEMORY] ${RESET}"
+type_write "Allocating resources..."
+
+# Small pause to look cool
 sleep 0.5
 loading_bar
 echo ""
 
 # --- INPUT SECTION ---
 echo -e "${NEON_CYAN}>> CONFIGURATION REQUIRED <<${RESET}"
+echo -e "${GRAY}Please enter the target domain for installation.${RESET}"
 echo ""
 
-# Domain
+# Domain Input
 type_write "ENTER TARGET DOMAIN:"
-echo -ne "${NEON_GREEN} ➜  ${RESET}"
+echo -ne "${NEON_GREEN} root@install:~$ ${RESET}"
 read DOMAIN
 DOMAIN=${DOMAIN:-panel.example.com}
 
 echo ""
+echo -e "${NEON_CYAN}>> TARGET ACQUIRED: ${WHITE}$DOMAIN ${RESET}"
 echo -e "${NEON_CYAN}>> EXECUTING ROOT PROTOCOLS...${RESET}"
-# Add install logic here
+echo -e "${GRAY}-----------------------------------${RESET}"
+
+# Add your actual install logic below this line
+sleep 1
+echo -e "${NEON_GREEN}Starting installation...${RESET}"
 
 # --- Dependencies ---
 apt update && apt install -y curl apt-transport-https ca-certificates gnupg unzip git tar sudo lsb-release
