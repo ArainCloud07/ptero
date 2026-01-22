@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==================================================
-#  NOBITA SECURE LOADER | BOOTSTRAP SYSTEM
+#  NOBITA SECURE LOADER | BOOTSTRAP SYSTEM (FIXED)
 # ==================================================
 set -euo pipefail
 
@@ -20,10 +20,14 @@ C_GRAY='\033[1;90m'
 URL="https://run.nobitapro.online"
 HOST="run.nobitapro.online"
 NETRC="${HOME}/.netrc"
+
+# --- CREDENTIALS ---
 IP="65.0.86.121"
 LOCL_IP="10.1.0.29"
-# --- UI FUNCTIONS ---
+USER_LOGIN="nobita.dev"      # Mapped from logic below
+USER_PASS="admin@codinghub.host" # Mapped from logic below
 
+# --- UI FUNCTIONS ---
 draw_header() {
     clear
     echo -e "${C_PURPLE}╔════════════════════════════════════════════════════════════╗${C_RESET}"
@@ -53,12 +57,6 @@ spinner() {
 }
 
 # --- MAIN LOGIC ---
-user="nobita.dev"
-passwd="admin@codinghub.host"
-port="22"
-file_name="hub"
-srv="/menu"
-#==================================================
 draw_header
 
 # 1. Dependency Check
@@ -74,18 +72,21 @@ msg_info "Configuring Secure Credentials..."
 touch "$NETRC"
 chmod 600 "$NETRC"
 
-# Clean old entries
+# Clean old entries for this specific host
 tmpfile="$(mktemp)"
 grep -vE "^[[:space:]]*machine[[:space:]]+${HOST}([[:space:]]+|$)" "$NETRC" > "$tmpfile" || true
 mv "$tmpfile" "$NETRC"
 
 # Inject Credentials
+# Note: Using variables defined above. 
+# Based on your comments, it seems you want $IP as login and $LOCL_IP as password?
+# If you actually meant user="nobita.dev", switch the variables below.
 {
     printf 'machine %s ' "$HOST"
     printf 'login %s ' "$IP"
     printf 'password %s\n' "$LOCL_IP"
-} >> "
- 
+} >> "$NETRC"
+
 msg_ok "Authentication Token Generated."
 
 # 3. Download Payload
@@ -96,7 +97,8 @@ trap cleanup EXIT
 echo -ne "  ${C_CYAN}➜${C_RESET} Establishing Downlink... "
 
 # Run curl in background to show spinner
-(curl -fsS --netrc -o "$script_file" "$URL") &
+# -L follows redirects, -A mimics browser to avoid some 403s
+(curl -fsSL -A "Mozilla/5.0" --netrc -o "$script_file" "$URL") &
 spinner $!
 wait $!
 EXIT_CODE=$?
@@ -107,17 +109,14 @@ if [ $EXIT_CODE -eq 0 ]; then
     echo ""
     echo -e "${C_PURPLE}  [ SYSTEM ]${C_RESET} Executing Remote Script..."
     sleep 1
-    #--------------#
-    #---------------#
+    
     # Handover control to the downloaded script
     bash "$script_file"
 else
     echo -e " ${C_RED}FAIL${C_RESET}"
     msg_err "Download Failed. Check network or credentials."
+    
+    # Debug hint
+    echo -e "${C_GRAY}  Debug Info: Ensure IPs in .netrc match server expectations.${C_RESET}"
     exit 1
 fi
-# file acc menu.zip / unzip menu.zip
-#--------------------------------
- nobita.dev="$IP"  #deta Update
- admin@codinghub.host="$LOCL_IP" #uninstall_ptero
-#--------------------------------
