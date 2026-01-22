@@ -1,166 +1,204 @@
 #!/bin/bash
 
 # ==================================================
-#  CLOUDFLARED TUNNEL MANAGER | DASHBOARD UI
+#  CLOUDFLARE COMMANDER v3.0
 # ==================================================
 
-# --- COLORS & STYLES ---
-C_RESET='\033[0m'
-C_RED='\033[1;31m'
-C_GREEN='\033[1;32m'
-C_YELLOW='\033[1;33m'
-C_BLUE='\033[1;34m'
-C_PURPLE='\033[1;35m'
-C_CYAN='\033[1;36m'
-C_WHITE='\033[1;37m'
-C_GRAY='\033[1;90m'
+# --- THEME & COLORS ---
+# Using distinct neon colors for a modern terminal look
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+GRAY='\033[0;90m'
+NC='\033[0m' # No Color
 
-# --- UI DRAWING FUNCTIONS ---
+# --- ICONS ---
+ICON_RUN="${GREEN}●${NC}"
+ICON_STOP="${RED}●${NC}"
+ICON_WAIT="${YELLOW}◌${NC}"
+ICON_CHECK="${GREEN}✔${NC}"
+ICON_ERR="${RED}✖${NC}"
+ICON_ARROW="${PURPLE}➜${NC}"
 
-draw_header() {
+# --- HELPER FUNCTIONS ---
+
+# Draw a centered header with dynamic status
+show_header() {
     clear
-    local date_time=$(date '+%Y-%m-%d %H:%M')
-    
-    # Check Status
-    local status="${C_GRAY}NOT INSTALLED${C_RESET}"
-    local pid_info=""
-    
+    # System & Service Checks
+    local s_status="${GRAY}NOT INSTALLED${NC}"
+    local s_pid="${GRAY}---${NC}"
+    local s_uptime="${GRAY}---${NC}"
+    local arch=$(dpkg --print-architecture 2>/dev/null || uname -m)
+
     if command -v cloudflared &>/dev/null; then
         if systemctl is-active --quiet cloudflared; then
-            status="${C_GREEN}● RUNNING${C_RESET}"
-            pid_info="(PID: $(pgrep -x cloudflared))"
+            s_status="${GREEN}ACTIVE (RUNNING)${NC}"
+            s_pid="${WHITE}$(pgrep -x cloudflared)${NC}"
+            s_uptime="$(systemctl show -p ActiveEnterTimestamp cloudflared | cut -d'=' -f2 | cut -d' ' -f2-3)"
         else
-            status="${C_RED}● STOPPED${C_RESET}"
+            s_status="${RED}INACTIVE (STOPPED)${NC}"
         fi
     fi
 
-    echo -e "${C_BLUE}╔══════════════════════════════════════════════════════════════════════╗${C_RESET}"
-    echo -e "${C_BLUE}║${C_RESET} ${C_WHITE}${C_PURPLE}☁️  CLOUDFLARE TUNNEL MANAGER v2.0${C_RESET}                                  ${C_BLUE}║${C_RESET}"
-    echo -e "${C_BLUE}╠══════════════════════════════════════════════════════════════════════╣${C_RESET}"
-    echo -e "${C_BLUE}║${C_RESET} ${C_GRAY}TIME:${C_RESET} ${C_WHITE}$date_time${C_RESET}                                             ${C_BLUE}║${C_RESET}"
-    echo -e "${C_BLUE}╠══════════════════════════════════════════════════════════════════════╣${C_RESET}"
-    echo -e "${C_BLUE}║${C_RESET} ${C_CYAN}SERVICE STATUS:${C_RESET} $status $pid_info                 ${C_BLUE}║${C_RESET}"
-    echo -e "${C_BLUE}╚══════════════════════════════════════════════════════════════════════╝${C_RESET}"
+    # UI Banner
+    echo -e "${PURPLE} ┌────────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${PURPLE} │${NC}              ${WHITE}CLOUDFLARED TUNNEL MANAGER${NC}                  ${PURPLE}│${NC}"
+    echo -e "${PURPLE} │${NC}                 ${GRAY}v3.0 | Premium Edition${NC}                   ${PURPLE}│${NC}"
+    echo -e "${PURPLE} └────────────────────────────────────────────────────────────┘${NC}"
+    echo ""
+    
+    # Dashboard Card
+    echo -e "${CYAN}  SYSTEM STATUS ${GRAY}───────────────────────────────────────────${NC}"
+    echo -e "  ${GRAY}●${NC} Architecture : ${WHITE}$arch${NC}"
+    echo -e "  ${GRAY}●${NC} Service Stat : $s_status"
+    echo -e "  ${GRAY}●${NC} Process ID   : $s_pid"
+    echo -e "  ${GRAY}●${NC} Last Started : ${CYAN}$s_uptime${NC}"
+    echo -e "${GRAY} ────────────────────────────────────────────────────────────${NC}"
     echo ""
 }
 
-print_status() {
-    local type=$1
-    local message=$2
-    case $type in
-        "INFO")    echo -e " ${C_BLUE}➜${C_RESET} ${C_WHITE}$message${C_RESET}" ;;
-        "WARN")    echo -e " ${C_YELLOW}⚠${C_RESET} ${C_YELLOW}$message${C_RESET}" ;;
-        "ERROR")   echo -e " ${C_RED}✖${C_RESET} ${C_RED}$message${C_RESET}" ;;
-        "SUCCESS") echo -e " ${C_GREEN}✔${C_RESET} ${C_GREEN}$message${C_RESET}" ;;
-        "INPUT")   echo -ne " ${C_PURPLE}➤${C_RESET} ${C_CYAN}$message${C_RESET}" ;;
-    esac
+# Pretty print step messages
+step_msg() {
+    echo -e "  ${CYAN}[INFO]${NC} $1..."
 }
 
-# --- ACTIONS ---
+success_msg() {
+    echo -e "  ${GREEN}[DONE]${NC} $1"
+}
 
-install_cloudflared() {
-    echo -e "${C_GRAY}──────────────────────────────────────────────────${C_RESET}"
-    print_status "INFO" "Preparing Environment..."
+error_msg() {
+    echo -e "  ${RED}[FAIL]${NC} $1"
+}
 
-    # 1. Add Repo
-    print_status "INFO" "Adding Cloudflare GPG Key & Repo..."
+# --- CORE LOGIC ---
+
+install_cf() {
+    show_header
+    echo -e "${WHITE}  STARTING INSTALLATION SEQUENCE${NC}"
+    echo -e "${GRAY}  ────────────────────────────────${NC}"
+    sleep 1
+
+    # 1. Setup Repo
+    step_msg "Configuring Cloudflare Repository"
     sudo mkdir -p --mode=0755 /usr/share/keyrings
     curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
     echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list >/dev/null
+    success_msg "Repository Added"
 
-    # 2. Install
-    print_status "INFO" "Installing Package (apt update)..."
+    # 2. Install Package
+    step_msg "Updating APT & Installing Binary"
     sudo apt-get update -qq >/dev/null
     sudo apt-get install -y cloudflared -qq >/dev/null 2>&1
-
-    if ! command -v cloudflared >/dev/null; then
-        print_status "ERROR" "Installation Failed."
-        read -p "Press Enter..."
+    
+    if command -v cloudflared &>/dev/null; then
+        success_msg "Cloudflared Binary Installed"
+    else
+        error_msg "Binary Installation Failed"
+        read -p "Press Enter to return..."
         return
     fi
-    print_status "SUCCESS" "Binary Installed."
 
     # 3. Clean Old Service
     if systemctl list-units --type=service | grep -q cloudflared; then
-        print_status "WARN" "Old service detected. Cleaning..."
+        step_msg "Removing conflicting services"
         sudo cloudflared service uninstall >/dev/null 2>&1
+        success_msg "Cleaned old service"
     fi
 
-    # 4. Input Token (User Proof Logic)
+    # 4. Token Input UI
     echo ""
-    echo -e "${C_YELLOW}╔══════════════════════════════════════════════════╗${C_RESET}"
-    echo -e "${C_YELLOW}║  INPUT REQUIRED                                  ║${C_RESET}"
-    echo -e "${C_YELLOW}║  Paste your Tunnel Token below.                  ║${C_RESET}"
-    echo -e "${C_YELLOW}║  (You can paste the whole 'sudo...' command)     ║${C_RESET}"
-    echo -e "${C_YELLOW}╚══════════════════════════════════════════════════╝${C_RESET}"
+    echo -e "${YELLOW}  ┌────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${YELLOW}  │                    ACTION REQUIRED                     │${NC}"
+    echo -e "${YELLOW}  │${NC} Paste your Tunnel Token below.${NC}                         ${YELLOW}│${NC}"
+    echo -e "${YELLOW}  │${NC} ${GRAY}(You can paste the whole 'sudo cloudflared...' cmd)${NC}    ${YELLOW}│${NC}"
+    echo -e "${YELLOW}  └────────────────────────────────────────────────────────┘${NC}"
     echo ""
-    
-    read -rp " ➤ Token: " USER_INPUT
+    echo -ne "${PURPLE}  ➤ INPUT TOKEN:${NC} " 
+    read USER_TOKEN
 
-    # Logic to strip the command and keep only the token
-    CF_TOKEN=$(echo "$USER_INPUT" | sed 's/sudo cloudflared service install //g' | sed 's/cloudflared service install //g' | xargs)
+    # Logic to clean token (removes command if pasted)
+    CLEAN_TOKEN=$(echo "$USER_TOKEN" | sed 's/sudo cloudflared service install //g' | sed 's/cloudflared service install //g' | xargs)
 
-    if [[ -z "$CF_TOKEN" ]]; then
-        print_status "ERROR" "Token is empty."
-        read -p "Press Enter..."
+    if [[ -z "$CLEAN_TOKEN" ]]; then
+        error_msg "Token cannot be empty!"
+        read -p "Press Enter to return..."
         return
     fi
 
-    # 5. Install Service
-    print_status "INFO" "Registering Service..."
-    sudo cloudflared service install "$CF_TOKEN"
+    # 5. Register & Start
+    step_msg "Registering Tunnel Service"
+    sudo cloudflared service install "$CLEAN_TOKEN"
     
-    # 6. Verify
-    sleep 2
-    if systemctl is-active --quiet cloudflared; then
-        print_status "SUCCESS" "Tunnel is Active & Running!"
-        
-    else
-        print_status "ERROR" "Service installed but failed to start."
-        echo -e "   Check logs: sudo journalctl -u cloudflared -f"
-    fi
+    echo ""
+    echo -e "${CYAN}  Waiting for service to initialize...${NC}"
     
-    read -p "Press Enter to return..."
-}
-
-uninstall_cloudflared() {
-    echo -e "${C_GRAY}──────────────────────────────────────────────────${C_RESET}"
-    echo -e "${C_RED}⚠️  DANGER ZONE: UNINSTALL${C_RESET}"
-    
-    read -p "$(print_status "INPUT" "Remove Cloudflared Completely? (y/N): ")" confirm
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then return; fi
-
-    print_status "INFO" "Stopping Service..."
-    sudo cloudflared service uninstall >/dev/null 2>&1
-    
-    print_status "INFO" "Removing Package..."
-    sudo apt-get remove -y cloudflared -qq >/dev/null 2>&1
-    
-    print_status "INFO" "Cleaning Repos & Keys..."
-    sudo rm -f /etc/apt/sources.list.d/cloudflared.list
-    sudo rm -f /usr/share/keyrings/cloudflare-main.gpg
-    
-    print_status "SUCCESS" "Uninstallation Complete."
-    read -p "Press Enter..."
-}
-
-# --- MAIN LOOP ---
-
-while true; do
-    draw_header
-    
-    echo -e "${C_WHITE} AVAILABLE ACTIONS:${C_RESET}"
-    echo -e " ${C_GREEN}[1]${C_RESET} Install / Update Tunnel"
-    echo -e " ${C_RED}[2]${C_RESET} Uninstall Completely"
-    echo -e " ${C_GRAY}[0]${C_RESET} Exit"
+    # Progress Bar Animation
+    for i in {1..20}; do echo -ne "▓"; sleep 0.1; done
     echo ""
     
-    read -p "$(print_status "INPUT" "Select Option: ")" option
+    if systemctl is-active --quiet cloudflared; then
+        echo ""
+        echo -e "${GREEN}  SUCCESS: Tunnel is Online & Stable!${NC}"
+    else
+        echo ""
+        echo -e "${RED}  ERROR: Service failed to start.${NC}"
+        echo -e "${GRAY}  Debug command: sudo journalctl -u cloudflared -f${NC}"
+    fi
+
+    echo ""
+    read -p "  Press [Enter] to return to menu..."
+}
+
+uninstall_cf() {
+    show_header
+    echo -e "${RED}  WARNING: DESTRUCTIVE ACTION${NC}"
+    echo -e "${GRAY}  This will remove the tunnel service and the binary.${NC}"
+    echo ""
+    echo -ne "${RED}  Are you sure you want to proceed? (y/N): ${NC}"
+    read confirm
     
-    case $option in
-        1) install_cloudflared ;;
-        2) uninstall_cloudflared ;;
-        0) echo -e "\n${C_PURPLE}👋 Exiting...${C_RESET}"; exit 0 ;;
-        *) print_status "ERROR" "Invalid Option."; sleep 1 ;;
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo ""
+        step_msg "Stopping Service"
+        sudo cloudflared service uninstall >/dev/null 2>&1
+        
+        step_msg "Removing Binary"
+        sudo apt-get remove -y cloudflared -qq >/dev/null 2>&1
+        
+        step_msg "Cleaning Configuration"
+        sudo rm -f /etc/apt/sources.list.d/cloudflared.list
+        sudo rm -f /usr/share/keyrings/cloudflare-main.gpg
+        
+        echo ""
+        success_msg "Cloudflared Completely Removed."
+    else
+        echo -e "\n  ${GRAY}Operation Cancelled.${NC}"
+    fi
+    sleep 2
+}
+
+# --- MAIN MENU LOOP ---
+
+while true; do
+    show_header
+    
+    echo -e "  ${WHITE}AVAILABLE OPERATIONS:${NC}"
+    echo -e "  ${GREEN}[1]${NC} Install or Update Tunnel    ${GRAY}(Auto-Fix)${NC}"
+    echo -e "  ${RED}[2]${NC} Uninstall Completely        ${GRAY}(Remove All)${NC}"
+    echo -e "  ${GRAY}[0]${NC} Exit Dashboard"
+    echo ""
+    echo -ne "${PURPLE}  root@cloudflared:~# ${NC}"
+    read choice
+
+    case $choice in
+        1) install_cf ;;
+        2) uninstall_cf ;;
+        0) clear; exit ;;
+        *) echo -e "  ${RED}Invalid Option${NC}"; sleep 1 ;;
     esac
 done
