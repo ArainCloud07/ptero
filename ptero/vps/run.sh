@@ -174,6 +174,7 @@ while true; do
     echo -e " ${C}[4]${N} PANEL"
     echo -e " ${B}[5]${N} LXC/LXD"
     echo -e " ${B}[6]${N} Docker"
+    echo -e " ${Y}[7]${N} SSH"
     echo -e " ${R}[0]${N} Exit"
     echo
     read -p " ➤ Select Option: " opt
@@ -185,6 +186,7 @@ while true; do
         4) panel_menu ;;
         5) lxc_setup ;;
         6) docker_setup ;;
+        7) bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/ssh.sh) ;;
         0) 
             echo -e "\n${G}👋 Goodbye!${N}"
             exit 0 
