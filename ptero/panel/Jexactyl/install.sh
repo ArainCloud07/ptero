@@ -86,13 +86,13 @@ chown -R www-data:www-data /var/www/jexactyl/*
 apt install -y cron
 systemctl enable --now cron
 (crontab -l 2>/dev/null; echo "* * * * * php /var/www/jexactyl/artisan schedule:run >> /dev/null 2>&1") | crontab -
-mkdir -p /etc/certs/panel2
-cd /etc/certs/panel2
+mkdir -p /etc/certs/${DOMAIN}
+cd /etc/certs/${DOMAIN}
 openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
 -subj "/C=NA/ST=NA/L=NA/O=NA/CN=Generic SSL Certificate" \
 -keyout privkey.pem -out fullchain.pem
 
-tee /etc/nginx/sites-available/panel.conf > /dev/null << EOF
+tee /etc/nginx/sites-available/panel.conf > /dev/null <<'EOF'
 server {
     listen 80;
     server_name ${DOMAIN};
@@ -115,8 +115,8 @@ server {
     sendfile off;
 
     # SSL Configuration
-    ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
+    ssl_certificate /etc/certs/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/certs/${DOMAIN}/privkey.pem;
     ssl_session_cache shared:SSL:10m;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
@@ -172,8 +172,10 @@ server {
     }
 }
 EOF
-ln -s /etc/nginx/sites-available/panel.conf /etc/nginx/sites-enabled/panel.conf || true
+
+ln -sf /etc/nginx/sites-available/panel.conf /etc/nginx/sites-enabled/panel.conf
 nginx -t && systemctl restart nginx
+
 
 # --- Queue Worker ---
 tee /etc/systemd/system/panel.service > /dev/null << 'EOF'
