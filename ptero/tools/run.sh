@@ -64,19 +64,19 @@ tools_menu() {
         case $t in
             1) 
                 echo -e "\n${YELLOW}Running Root Access Script...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/tools/root.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/root.sh) 
                 pause ;;
             2) 
                 echo -e "\n${YELLOW}Running Tailscale Installer...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/tools/Tailscale.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/tailscale.sh) 
                 pause ;;
             3) 
                 echo -e "\n${YELLOW}Running Cloudflare Script...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/tools/cloudflare.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/cloudflare.sh) 
                 pause ;;
             4) 
                 echo -e "\n${YELLOW}Fetching System Info...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/tools/SYSTEM.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/info.sh) 
                 pause ;;
             5) 
                 echo -e "\n${YELLOW}Running VPS Optimizer...${NC}"
@@ -84,7 +84,7 @@ tools_menu() {
                 pause ;;
             6) 
                 echo -e "\n${YELLOW}Installing Web Terminal...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/tools/terminal.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/terminal.sh) 
                 pause ;;
             7) 
                 echo -e "\n${YELLOW}Installing RDP...${NC}"
