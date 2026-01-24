@@ -101,6 +101,7 @@ cd /var/www
 git clone https://github.com/mythicalltd/featherpanel.git featherpanel
 chown -R www-data:www-data /var/www/featherpanel/*
 cd /var/www/featherpanel
+mv /var/www/featherpanel/frontendv2 /var/www/featherpanel/frontend
 
 # ==============================
 # BACKEND
