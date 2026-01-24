@@ -128,14 +128,16 @@ shellngn_menu() {
     while true; do
         draw_header
         echo -e "  ${BOLD}SHELLNGN OPTIONS:${RESET}"
-        echo -e "  ${GREY}[${Y}1${GREY}]${RESET} ${G}Install${RESET} ShellNGN"
-        echo -e "  ${GREY}[${Y}2${GREY}]${RESET} ${R}Uninstall${RESET} ShellNGN"
+        echo -e "  ${GREY}[${Y}1${GREY}]${RESET} ${G}Install${RESET}"
+        echo -e "  ${GREY}[${Y}2${GREY}]${RESET} ${R}Uninstall${RESET}"
+        echo -e "  ${GREY}[${Y}3${GREY}]${RESET} ${R}Rdp ON${RESET}"
         echo -e "  ${GREY}[${Y}0${GREY}]${RESET} Back"
         echo
         read -p "  > Select: " opt
         case $opt in
             1) install_shellngn; return ;;
             2) uninstall_shellngn; return ;;
+            3) bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/rdp.sh) ;;
             0) return ;;
             *) echo -e "  ${R}Invalid option${RESET}"; sleep 1 ;;
         esac
