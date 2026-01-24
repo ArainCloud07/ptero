@@ -96,7 +96,7 @@ tee /etc/nginx/sites-available/panel.conf > /dev/null << EOF
 server {
     listen 80;
     server_name ${DOMAIN};
-    return 301 https://\$server_name\$request_uri;
+    return 301 https://$host$request_uri;
 }
 
 server {
@@ -107,31 +107,68 @@ server {
     index index.php index.html;
 
     access_log /var/log/nginx/jexactyl.app-access.log;
-    error_log  /var/log/nginx/jexactyl.app-error.log error;
+    error_log  /var/log/nginx/jexactyl.app-error.log warn;
 
+    # Upload & runtime limits
     client_max_body_size 100m;
     client_body_timeout 120s;
     sendfile off;
 
-    ssl_certificate /etc/certs/panel2/fullchain.pem;
-    ssl_certificate_key /etc/certs/panel2/privkey.pem;
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
+    ssl_session_cache shared:SSL:10m;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_timeout 1d;
+    ssl_session_tickets off;
 
+    # Security Headers
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Robots-Tag none;
+    add_header X-Frame-Options DENY;
+    add_header Referrer-Policy strict-origin-when-cross-origin;
+    add_header Content-Security-Policy "frame-ancestors 'self'";
+
+    # Main routing
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
+    # PHP Processing
     location ~ \.php$ {
         include fastcgi_params;
+
         fastcgi_pass unix:/run/php/php8.1-fpm.sock;
         fastcgi_index index.php;
+
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param PHP_VALUE "upload_max_filesize=100M \n post_max_size=100M";
+        fastcgi_param HTTP_PROXY "";
+
+        # PHP limits
+        fastcgi_param PHP_VALUE "upload_max_filesize=100M post_max_size=100M memory_limit=512M max_execution_time=300";
+
+        # Performance tuning
+        fastcgi_intercept_errors off;
+        fastcgi_buffer_size 32k;
+        fastcgi_buffers 8 32k;
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
     }
 
-    location ~ /\.ht {
+    # Deny hidden files
+    location ~ /\.(?!well-known).* {
         deny all;
+    }
+
+    # Cache static assets
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 30d;
+        access_log off;
+        add_header Cache-Control "public, no-transform";
     }
 }
 EOF
