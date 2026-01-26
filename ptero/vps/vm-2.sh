@@ -41,8 +41,9 @@ EOF
     echo -e "${NC}${BG_CYAN}${WHITE}${BOLD}  SYSTEM MANAGER ACTIVE  ${NC} ${CYAN}▶ Pure QEMU Environment${NC}"
     echo -e "${B_CYAN} ---------------------------------------------------------------------------${NC}"
     echo
-}
+    echo
 
+}
 # Run the header
 display_header
 # Function to display colored output with emojis
