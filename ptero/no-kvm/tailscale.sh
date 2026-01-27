@@ -83,7 +83,7 @@ install_tailscale() {
     install_docker
     
     echo -e "  ${BOLD}Tailscale Deployment${RESET}"
-    read -p "  Enter Auth Key (or leave blank for interactive): " TSKEY
+    read -p "  Enter Auth Key -> " TSKEY
     
     docker volume create tailscale-data >/dev/null 2>&1
     docker rm -f tailscale >/dev/null 2>&1
