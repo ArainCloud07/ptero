@@ -134,7 +134,7 @@ main_menu(){
         printf "${BORDER_COLOR}${LINE_V}${NC}    ${WHITE}[02]${NC} ${CYAN}Panel Manager${NC}            ${SPACER} ${WHITE}[06]${NC} ${CYAN}System Options${NC}           ${BORDER_COLOR}${LINE_V}${NC}\n"
         
         # Row 3
-        printf "${BORDER_COLOR}${LINE_V}${NC}    ${WHITE}[03]${NC} ${CYAN}Wings Installation${NC}       ${SPACER} ${WHITE}[07]${NC} ${CYAN}External Infra${NC}           ${BORDER_COLOR}${LINE_V}${NC}\n"
+        printf "${BORDER_COLOR}${LINE_V}${NC}    ${WHITE}[03]${NC} ${CYAN}Wings Installation${NC}       ${SPACER} ${WHITE}[07]${NC} ${CYAN}NO KVM${NC}           ${BORDER_COLOR}${LINE_V}${NC}\n"
         
         # Row 4
         printf "${BORDER_COLOR}${LINE_V}${NC}    ${WHITE}[04]${NC} ${CYAN}Tools Utility${NC}            ${SPACER} ${RED}[08]${NC} ${RED}Exit Panel${NC}               ${BORDER_COLOR}${LINE_V}${NC}\n"
@@ -158,7 +158,7 @@ main_menu(){
             4) loading_bar; bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/tools/run.sh) ;;
             5) loading_bar; bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/thame/chang/dev.sh) ;;
             6) loading_bar; bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/menu/System1.sh) ;;
-            7) loading_bar; bash <(curl -s https://raw.githubusercontent.com/nobita329/The-Coding-Hub/refs/heads/main/srv/External/INFRA.sh) ;;
+            7) loading_bar; bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/no-kvm/run.sh) ;;
             8) 
                 echo -e ""
                 echo -e "  ${GREEN}Thank you for using CODING HUB!${NC}"
