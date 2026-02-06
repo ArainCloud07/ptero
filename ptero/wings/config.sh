@@ -151,7 +151,7 @@ while [ $STEP -le 6 ]; do
 
         4) # STEP 4: API PORT (NEW)
             echo ""
-            echo -e "  ${GRAY}(Default: 8080)${NC}"
+            echo -e "  ${GRAY}(Default: 8080) ENTER${NC}"
             if [ "$API_PORT" != "8080" ]; then echo -e "  ${GRAY}(Current: $API_PORT)${NC}"; fi
             
             msg_input "API Port"
