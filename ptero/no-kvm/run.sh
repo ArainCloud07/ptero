@@ -52,7 +52,8 @@ while true; do
     echo -e "${B_CYAN}┃${NC} [3] Kali RDP   ➔ $(get_docker_status "kali-rdp")"
     echo -e "${B_CYAN}┃${NC} [4] Win 2016   ➔ $(get_docker_status "windows2016")"
     echo -e "${B_CYAN}┃${NC} [5] Tailscale  ➔ $(get_docker_status "tailscale")"
-    echo -e "${B_CYAN}┃${NC} [6] ${B_RED}EXIT SYSTEM${NC}"
+    echo -e "${B_CYAN}┃${NC} [6] Tocaltonet ➔ $(get_docker_status "localtonet")"
+    echo -e "${B_CYAN}┃${NC} [7] ${B_RED}EXIT SYSTEM${NC}"
     echo -e "${B_CYAN}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${NC}"
     echo -ne "${B_YELLOW}Option select karein >> ${NC}"
     read -r choice
