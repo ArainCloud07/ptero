@@ -45,7 +45,7 @@ execute_script() {
 while true; do
     clear
     echo -e "${B_CYAN}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓${NC}"
-    echo -e "${B_CYAN}┃${NC}  ${B_GREEN}🚀 NOBITA-PTERO CONTROL CENTER v10.0${NC}         ${B_CYAN}┃${NC}"
+    echo -e "${B_CYAN}┃${NC}  ${B_GREEN}🚀 NOBITA CONTROL CENTER v10.0${NC}         ${B_CYAN}┃${NC}"
     echo -e "${B_CYAN}┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫${NC}"
     echo -e "${B_CYAN}┃${NC} [1] Cockpit    ➔ $(get_docker_status "cockpit")"
     echo -e "${B_CYAN}┃${NC} [2] SSH WAB    ➔ $(get_docker_status "shellngn")"
