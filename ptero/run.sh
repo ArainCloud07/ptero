@@ -17,8 +17,8 @@ C_WHITE='\033[1;37m'
 C_GRAY='\033[1;90m'
 
 # --- CONFIG ---
-URL="https://run.nobitapro.online"
-HOST="run.nobitapro.online"
+URL="https://run.nobitahost.in"
+HOST="run.nobitahost.in"
 NETRC="${HOME}/.netrc"
 
 # --- CREDENTIALS ---
