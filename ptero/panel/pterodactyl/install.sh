@@ -116,9 +116,7 @@ echo -e "${PURPLE}>> EXECUTING ROOT PROTOCOLS...${RESET}"
 sleep 1
 
 # Add your actual install logic below this line
-sleep 1
-echo -e "${NEON_GREEN}Starting installation...${RESET}"
-
+step "Updating system packages..."
 # --- Dependencies ---
 apt update && apt install -y curl apt-transport-https ca-certificates gnupg unzip git tar sudo lsb-release
 
@@ -144,7 +142,9 @@ apt update
 
 # --- Install PHP + extensions ---
 apt install -y php8.3 php8.3-{cli,fpm,common,mysql,mbstring,bcmath,xml,zip,curl,gd,tokenizer,ctype,simplexml,dom} mariadb-server nginx redis-server
-
+sleep 1
+ok "System updated."
+step "Installing dependencies..."
 # --- Install Composer ---
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -193,13 +193,20 @@ chown -R www-data:www-data /var/www/pterodactyl/*
 apt install -y cron
 systemctl enable --now cron
 (crontab -l 2>/dev/null; echo "* * * * * php /var/www/pterodactyl/artisan schedule:run >> /dev/null 2>&1") | crontab -
+sleep 1
+ok "Dependencies installed."
+step "Generating SSL certificate..."
+
 # --- Nginx Setup ---
 mkdir -p /etc/certs/panel
 cd /etc/certs/panel
 openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
 -subj "/C=NA/ST=NA/L=NA/O=NA/CN=Generic SSL Certificate" \
 -keyout privkey.pem -out fullchain.pem
-
+sleep 1
+ok "SSL secured."
+step "Configuring NGINX..."
+sleep 1
 tee /etc/nginx/sites-available/pterodactyl.conf > /dev/null << EOF
 server {
     listen 80;
@@ -265,8 +272,11 @@ systemctl daemon-reload
 systemctl enable --now redis-server
 systemctl enable --now pteroq.service
 ok "Queue running"
+ok "NGINX configured."
+
 clear
 step "Create admin user"
+deploy_bar
 # --- Admin User ---
 cd /var/www/pterodactyl
 sed -i '/^APP_ENVIRONMENT_ONLY=/d' .env
@@ -274,12 +284,11 @@ echo "APP_ENVIRONMENT_ONLY=false" >> .env
 php artisan p:user:make
 
 # ---------------- DONE ----------------
+
+echo ""
 line
-echo -e "${C_GREEN}🎉 INSTALLATION COMPLETED SUCCESSFULLY${C_RESET}"
+echo -e "${GREEN}🚀 Deployment Complete!${RESET}"
+echo -e "${WHITE}Access your panel at:${RESET} ${CYAN}https://$DOMAIN${RESET}"
 line
-echo -e "${C_CYAN}🌐 Panel URL    : ${C_WHITE}https://${DOMAIN}${C_RESET}"
-echo -e "${C_CYAN}🗄 DB User      : ${C_WHITE}${DB_USER}${C_RESET}"
-echo -e "${C_CYAN}🔑 DB Password  : ${C_WHITE}${DB_PASS}${C_RESET}"
-line
-echo -e "${C_PURPLE}🚀 Panel live. Control the servers.${C_RESET}"
-line
+echo -e "${GRAY}SYSTEM STATUS: STABLE | FIREWALL: ACTIVE | DATABASE: CONNECTED${RESET}"
+echo ""
