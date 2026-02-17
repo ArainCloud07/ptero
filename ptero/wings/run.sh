@@ -117,6 +117,9 @@ ssl_setup() {
     
 
     echo -e "${Y}➜ Requesting Certificate for ${W}$DOMAIN${Y}...${N}"
+    rm -rf /etc/letsencrypt/live/$DOMAIN
+    rm -rf /etc/letsencrypt/archive/$DOMAIN
+    rm -rf /etc/letsencrypt/renewal/$DOMAIN.conf
     certbot certonly --nginx -d "$DOMAIN" --non-interactive --agree-tos --email "ssl$(tr -dc a-z0-9 </dev/urandom | head -c6)@$DOMAIN"
     
     echo -e "\n${G}✔ SSL Setup Complete.${N}"
