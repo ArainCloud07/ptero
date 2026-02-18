@@ -6,7 +6,7 @@
 
 # --- 0. PRE-INITIALIZATION ---
 # Hostname badalna sabse pehle
-hostnamectl set-hostname Nobita 2>/dev/null
+hostnamectl set-hostname Shubham 2>/dev/null
 
 # --- COLORS & STYLES ---
 B_BLUE='\033[1;38;5;33m'
@@ -66,11 +66,11 @@ panel_menu() {
         
         case $p_opt in
             1) echo -e "\n  ${B_BLUE}➜ Installing Cockpit...${NC}"
-               bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/panel/cockpit.sh); pause ;;
+               bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/panel/cockpit.sh); pause ;;
             2) echo -e "\n  ${B_BLUE}➜ Installing CasaOS...${NC}"
-               bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/panel/casaos.sh); pause ;;
+               bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/panel/casaos.sh); pause ;;
             3) echo -e "\n  ${B_BLUE}➜ Installing 1Panel...${NC}"
-               bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/panel/1panel.sh); pause ;;
+               bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/panel/1panel.sh); pause ;;
             0) break ;;
             *) echo -e "  ${B_RED}Invalid option!${NC}"; sleep 0.7 ;;
         esac
@@ -157,13 +157,13 @@ while true; do
 }
 EOF
            echo -e "  ${B_GREEN}✅ dev.nix configured.${NC}"; pause ;;
-        2) bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/vm-1.sh); pause ;;
-        3) bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/auto.sh)
-           bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/vm-2.sh); pause ;;
+        2) bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/vm-1.sh); pause ;;
+        3) bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/auto.sh)
+           bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/vm-2.sh); pause ;;
         4) panel_menu ;;
-        5) bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/lxc.sh); pause ;;
-        6) bash <(curl -s https://raw.githubusercontent.com/nobita329/ptero/refs/heads/main/ptero/vps/Docker.sh); pause ;;
-        0) echo -e "\n  ${B_RED}Terminating session...${NC} Goodbye, Nobita."; exit 0 ;;
+        5) bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/lxc.sh); pause ;;
+        6) bash <(curl -s https://raw.githubusercontent.com/ArainCloud07/ptero/refs/heads/main/ptero/vps/Docker.sh); pause ;;
+        0) echo -e "\n  ${B_RED}Terminating session...${NC} Goodbye, Shubham."; exit 0 ;;
         *) echo -e "  ${B_RED}Error: Input not valid.${NC}"; sleep 0.7 ;;
     esac
 done
